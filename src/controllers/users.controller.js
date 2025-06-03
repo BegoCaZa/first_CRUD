@@ -20,22 +20,7 @@ usersController.readAllUsers = (req, res) => {
   });
 };
 
-//read users by id
-usersController.readUserById = (req, res) => {
-  const userId = req.params.id;
-  fs.readFile(usersFilePath, (err, data) => {
-    if (err) return res.status(500).send('Error al leer el archivo');
-
-    const jsonData = JSON.parse(data);
-    const user = jsonData.find(user => user.userId === userId);
-
-    if (!user) return res.status(404).send('Usuario no encontrado');
-
-    res.send(user);
-  });
-};
-
-//create a new user (email must be unique)
+//CREATE a new user
 usersController.createUser = (req, res) => {
   const newUser = req.body;
   //id unico un v4
@@ -55,9 +40,52 @@ usersController.createUser = (req, res) => {
 
     fs.writeFile(usersFilePath, JSON.stringify(jsonData), err => {
       if (err) return res.status(500).send('Error al escribir en el archivo');
-      res.status(201).send(newUser);
+
+      res.send(newUser);
     });
     // res.end();
+  });
+};
+
+//READ users by id
+usersController.readUserById = (req, res) => {
+  const userId = req.params.id;
+  fs.readFile(usersFilePath, (err, data) => {
+    if (err) return res.status(500).send('Error al leer el archivo');
+
+    const jsonData = JSON.parse(data);
+    const user = jsonData.find(user => user.userId === userId);
+
+    if (!user) return res.status(404).send('Usuario no encontrado');
+
+    res.send(user);
+  });
+};
+
+//UPDATE user by id
+usersController.updateUserById = (req, res) => {
+  const userId = req.params.id;
+  const updatedUser = req.body;
+
+  fs.readFile(usersFilePath, (err, data) => {
+    if (err) return res.status(500).send('Error al leer el archivo');
+
+    const jsonData = JSON.parse(data);
+
+    const userIndex = jsonData.find(user => user.userId === userId); //encuentra el usuario por id
+
+    if (!userIndex) return res.status(404).send('Usuario no encontrado');
+
+    //actualiza al usuario
+    jsonData[userIndex] = { ...jsonData[userIndex], ...updatedUser };
+
+    fs.writeFile(usersFilePath, JSON.stringify(jsonData), err => {
+      if (err) return res.status(500).send('Error al escribir en el archivo');
+
+      res.send(jsonData[userIndex]);
+      console.log('Usuario actualizado:', jsonData[userIndex]);
+      //mando solo ese usuario actualizado
+    });
   });
 };
 

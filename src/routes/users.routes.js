@@ -6,5 +6,6 @@ const usersRouter = express.Router();
 usersRouter.get('/read', usersController.readAllUsers);
 usersRouter.get('/read/:id', usersController.readUserById);
 usersRouter.post('/write', usersController.createUser);
+usersRouter.patch('/update/:id', usersController.updateUserById);
 
 module.exports = usersRouter;
