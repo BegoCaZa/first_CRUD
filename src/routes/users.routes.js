@@ -7,5 +7,6 @@ usersRouter.get('/read', usersController.readAllUsers);
 usersRouter.get('/read/:id', usersController.readUserById);
 usersRouter.post('/write', usersController.createUser);
 usersRouter.patch('/update/:id', usersController.updateUserById);
+usersRouter.delete('/delete/:id', usersController.deleteUserById);
 
 module.exports = usersRouter;

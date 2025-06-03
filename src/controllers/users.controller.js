@@ -104,4 +104,29 @@ usersController.updateUserById = (req, res) => {
   });
 };
 
+//DELETE user by id
+usersController.deleteUserById = (req, res) => {
+  const userId = req.params.id;
+
+  fs.readFile(usersFilePath, (err, data) => {
+    if (err) return res.status(500).send('Error al leer el archivo');
+
+    const jsonData = JSON.parse(data);
+
+    //encuentro el usuario por id
+    const foundUser = jsonData.find(user => user.userId === userId);
+
+    if (!foundUser) return res.status(404).send('Usuario no encontrado');
+
+    //nuevo array sin el usuario
+    const filteredData = jsonData.filter(user => user.userId !== userId);
+
+    fs.writeFile(usersFilePath, JSON.stringify(filteredData), err => {
+      if (err) return res.status(500).send('Error al escribir en el archivo');
+
+      res.send({ message: 'Usuario eliminado correctamente' });
+    });
+  });
+};
+
 module.exports = usersController;
