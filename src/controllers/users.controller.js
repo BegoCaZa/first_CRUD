@@ -1,6 +1,7 @@
 //son las acciones que se van a realizar para cada petición
 const fs = require('fs');
 const path = require('path');
+const { json } = require('stream/consumers');
 const { v4 } = require('uuid');
 
 //creo el objeto para guardar las acciones
@@ -72,18 +73,32 @@ usersController.updateUserById = (req, res) => {
 
     const jsonData = JSON.parse(data);
 
-    const userIndex = jsonData.find(user => user.userId === userId); //encuentra el usuario por id
+    const foundUser = jsonData.find(user => user.userId === userId); //encuentra el usuario por id
 
-    if (!userIndex) return res.status(404).send('Usuario no encontrado');
+    if (!foundUser) return res.status(404).send('Usuario no encontrado');
 
-    //actualiza al usuario
-    jsonData[userIndex] = { ...jsonData[userIndex], ...updatedUser };
+    //no repetir email
+    const existingEmail = jsonData.find(
+      user => user.email === updatedUser.email
+    );
+    if (existingEmail) return res.status(400).send('El email ya está en uso');
 
-    fs.writeFile(usersFilePath, JSON.stringify(jsonData), err => {
+    //creo un nuevo objeto con los datos actualizados?
+    const updatedJsonData = jsonData.map(user => {
+      if (user.userId === userId) {
+        return {
+          ...user,
+          ...updatedUser //actualizo los datos del usuario
+        };
+      }
+      return user; //si no coicide,devuelvo el usuario sin cambios
+    });
+
+    fs.writeFile(usersFilePath, JSON.stringify(updatedJsonData), err => {
       if (err) return res.status(500).send('Error al escribir en el archivo');
 
-      res.send(jsonData[userIndex]);
-      console.log('Usuario actualizado:', jsonData[userIndex]);
+      res.send(updatedUser);
+      console.log('Usuario actualizado:', updatedUser);
       //mando solo ese usuario actualizado
     });
   });
