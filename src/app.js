@@ -33,6 +33,7 @@ app.get('/write', (req, res) => {
 
     const jsonData = JSON.parse(data);
     const updatedList = [...jsonData].push(newUser);
+
     fs.writeFile(usersFilePath, updatedList, err => {
       if (err) return res.status(500).send('Error al escribir en el archivo');
     });
