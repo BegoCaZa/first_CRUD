@@ -1,6 +1,7 @@
 //son las acciones que se van a realizar para cada petición
 const fs = require('fs');
 const path = require('path');
+import { v4 } from 'uuid';
 
 //creo el objeto para guardar las acciones
 const usersController = {};
@@ -37,6 +38,8 @@ usersController.readUserById = (req, res) => {
 //create a new user (email must be unique)
 usersController.createUser = (req, res) => {
   const newUser = req.body;
+  //id unico un v4
+  newUser.userId = v4();
 
   fs.readFile(usersFilePath, (err, data) => {
     if (err) return res.status(500).send('Error al leer el archivo');
@@ -47,13 +50,14 @@ usersController.createUser = (req, res) => {
     const existingUser = jsonData.find(user => user.email === newUser.email);
     if (existingUser) return res.status(400).send('El email ya está en uso');
 
+    //Meto ese nuevo usuario al array
     jsonData.push(newUser);
 
-    fs.writeFile(usersFilePath, JSON.stringify(newUser), err => {
+    fs.writeFile(usersFilePath, JSON.stringify(jsonData), err => {
       if (err) return res.status(500).send('Error al escribir en el archivo');
       res.status(201).send(newUser);
     });
-    res.end();
+    // res.end();
   });
 };
 
