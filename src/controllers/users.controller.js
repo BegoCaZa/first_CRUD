@@ -79,7 +79,7 @@ usersController.updateUserById = (req, res) => {
 
     //no repetir email
     const existingEmail = jsonData.find(
-      user => user.email === updatedUser.email
+      user => user.email === updatedUser.email && user.id !== userId
     );
     if (existingEmail) return res.status(409).send('El email ya está en uso');
 
