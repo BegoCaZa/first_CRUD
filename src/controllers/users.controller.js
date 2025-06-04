@@ -1,7 +1,6 @@
 //son las acciones que se van a realizar para cada petición
 const fs = require('fs');
 const path = require('path');
-const { json } = require('stream/consumers');
 const { v4 } = require('uuid');
 
 //creo el objeto para guardar las acciones
