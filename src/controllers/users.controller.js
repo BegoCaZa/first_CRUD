@@ -34,7 +34,7 @@ usersController.createUser = (req, res) => {
 
     // Check si existe el email
     const existingUser = jsonData.find(user => user.email === newUser.email);
-    if (existingUser) return res.status(400).send('El email ya está en uso');
+    if (existingUser) return res.status(409).send('El email ya está en uso');
 
     //Meto ese nuevo usuario al array
     jsonData.push(newUser);
@@ -81,7 +81,7 @@ usersController.updateUserById = (req, res) => {
     const existingEmail = jsonData.find(
       user => user.email === updatedUser.email
     );
-    if (existingEmail) return res.status(400).send('El email ya está en uso');
+    if (existingEmail) return res.status(409).send('El email ya está en uso');
 
     //creo un nuevo objeto con los datos actualizados?
     const updatedJsonData = jsonData.map(user => {
